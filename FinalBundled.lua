@@ -1,40 +1,47 @@
--- ===== FIX MISSING GLOBALS =====
+-- ===== STRONGER GLOBAL FIX =====
 local env = getfenv()
-if not env.Action then
-    env.Action = {}
-    function env.Action.new() return { _when = 0, _type = "", hitbox = Vector3.new(0,0,0), name = "", ihbc = false } end
+_G.Action = _G.Action or {}
+function _G.Action.new() 
+    return { _when = 0, _type = "", hitbox = Vector3.new(0,0,0), name = "", ihbc = false, 
+             start = function() end, update = function() end } 
 end
-if not env.Signal then
-    env.Signal = {}
-    function env.Signal.new(owner)
-        local cons = {}
-        return { connect = function(self, name, cb) table.insert(cons, cb) return { Disconnect = function() end } end,
-                 fire = function(self, ...) for _, cb in ipairs(cons) do cb(...) end end }
+
+_G.Signal = _G.Signal or {}
+function _G.Signal.new(owner)
+    local cons = {}
+    return { connect = function(self, name, cb) table.insert(cons, cb) return { Disconnect = function() end } end,
+             fire = function(self, ...) for _, cb in ipairs(cons) do cb(...) end end }
+end
+
+_G.PartTiming = _G.PartTiming or {}
+function _G.PartTiming.new()
+    return { uhc = false, fhb = false, duih = false, name = "", hitbox = Vector3.new(0,0,0),
+             actions = { push = function(self, a) table.insert(self, a) end } }
+end
+
+_G.Defense = { cdpo = function() end }
+_G.RepeatInfo = { new = function() return {} end }
+_G.Profiler = { run = function(name, f) f() end }
+_G.Logger = { warn = function(...) warn(...) end, notify = function(...) print(...) end }
+_G.PersistentData = { init = function() end, get = function() return nil end, set = function() end }
+_G.PlayerScanning = { init = function() end, detach = function() end }
+_G.Keybinding = { init = function() end, detach = function() end }
+_G.CoreGuiManager = { set = function() end, clear = function() end }
+_G.SaveManager = { init = function() end, detach = function() end, LoadAutoloadConfig = function() end }
+_G.ModuleManager = { refresh = function() end, detach = function() end }
+_G.ControlModule = { init = function() end, detach = function() end }
+_G.Options = { MenuKeybind = "Insert" }
+_G.Configuration = { expectToggleValue = function() return false end }
+_G.shared = _G.shared or {}
+_G.LRM_SEND_WEBHOOK = function() end
+_G.LRM_SANITIZE = function(a,b) return a end
+
+-- Make sure getfenv also sees them
+for k, v in pairs(_G) do
+    if getfenv()[k] == nil then
+        getfenv()[k] = v
     end
 end
-if not env.PartTiming then
-    env.PartTiming = {}
-    function env.PartTiming.new()
-        return { uhc = false, fhb = false, duih = false, name = "", hitbox = Vector3.new(0,0,0),
-                 actions = { push = function(self, a) table.insert(self, a) end } }
-    end
-end
-env.Defense = env.Defense or { cdpo = function() end }
-env.RepeatInfo = env.RepeatInfo or { new = function() return {} end }
-env.Profiler = { run = function(name, f) f() end }
-env.Logger = { warn = function(...) warn(...) end, notify = function(...) print(...) end }
-env.PersistentData = { init = function() end, get = function() return nil end, set = function() end }
-env.PlayerScanning = { init = function() end, detach = function() end }
-env.Keybinding = { init = function() end, detach = function() end }
-env.CoreGuiManager = { set = function() end, clear = function() end }
-env.SaveManager = { init = function() end, detach = function() end, LoadAutoloadConfig = function() end }
-env.ModuleManager = { refresh = function() end, detach = function() end }
-env.ControlModule = { init = function() end, detach = function() end }
-env.Options = { MenuKeybind = "Insert" }
-env.Configuration = { expectToggleValue = function() return false end }
-env.shared = env.shared or {}
-env.LRM_SEND_WEBHOOK = function() end
-env.LRM_SANITIZE = function(a,b) return a end
 -- ===== END OF FIX =====
 
 --[[ AUTO-BUNDLED WITH MODULE SYSTEM ]]--

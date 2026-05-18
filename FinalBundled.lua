@@ -1,3 +1,42 @@
+-- ===== FIX MISSING GLOBALS =====
+local env = getfenv()
+if not env.Action then
+    env.Action = {}
+    function env.Action.new() return { _when = 0, _type = "", hitbox = Vector3.new(0,0,0), name = "", ihbc = false } end
+end
+if not env.Signal then
+    env.Signal = {}
+    function env.Signal.new(owner)
+        local cons = {}
+        return { connect = function(self, name, cb) table.insert(cons, cb) return { Disconnect = function() end } end,
+                 fire = function(self, ...) for _, cb in ipairs(cons) do cb(...) end end }
+    end
+end
+if not env.PartTiming then
+    env.PartTiming = {}
+    function env.PartTiming.new()
+        return { uhc = false, fhb = false, duih = false, name = "", hitbox = Vector3.new(0,0,0),
+                 actions = { push = function(self, a) table.insert(self, a) end } }
+    end
+end
+env.Defense = env.Defense or { cdpo = function() end }
+env.RepeatInfo = env.RepeatInfo or { new = function() return {} end }
+env.Profiler = { run = function(name, f) f() end }
+env.Logger = { warn = function(...) warn(...) end, notify = function(...) print(...) end }
+env.PersistentData = { init = function() end, get = function() return nil end, set = function() end }
+env.PlayerScanning = { init = function() end, detach = function() end }
+env.Keybinding = { init = function() end, detach = function() end }
+env.CoreGuiManager = { set = function() end, clear = function() end }
+env.SaveManager = { init = function() end, detach = function() end, LoadAutoloadConfig = function() end }
+env.ModuleManager = { refresh = function() end, detach = function() end }
+env.ControlModule = { init = function() end, detach = function() end }
+env.Options = { MenuKeybind = "Insert" }
+env.Configuration = { expectToggleValue = function() return false end }
+env.shared = env.shared or {}
+env.LRM_SEND_WEBHOOK = function() end
+env.LRM_SANITIZE = function(a,b) return a end
+-- ===== END OF FIX =====
+
 --[[ AUTO-BUNDLED WITH MODULE SYSTEM ]]--
 local _MODULES = {}
 local function require(name)
